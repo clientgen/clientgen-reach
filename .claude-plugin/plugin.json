@@ -1,0 +1,11 @@
+{
+  "name": "clientgen-reach",
+  "displayName": "ClientGen Reach",
+  "version": "0.3.1",
+  "license": "Apache-2.0",
+  "description": "Standalone Reach marketing workflows for advisors: brand briefs, postcards, handwritten notes, hosted personal pages, proofs and compliance review. Orders are confirmed by the advisor through an emailed link, outside Claude. Requires a Reach account; no app.clientgen.ai subscription required.",
+  "icon": "./assets/icon.png",
+  "author": {
+    "name": "ClientGen"
+  }
+}

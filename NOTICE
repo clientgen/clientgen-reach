@@ -1,0 +1,10 @@
+ClientGen Reach plugin
+Copyright 2026 ClientGen
+
+This product includes software licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The marketing-compliance skill (skills/marketing-compliance/SKILL.md) is adapted from the
+compliance skill in anthropics/claude-for-financial-advisors
+(https://github.com/anthropics/claude-for-financial-advisors),
+Copyright 2026 Anthropic PBC, licensed under the Apache License, Version 2.0.
+ClientGen modified it for the ClientGen Reach workflows.
