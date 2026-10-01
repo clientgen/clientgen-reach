@@ -7,7 +7,7 @@ description: >
   cancels, or logs anything. Dispatched by the ClientGen skills when they need facts before
   drafting.
 model: haiku
-tools: mcp__clientgen__get_brand_profile, mcp__clientgen__list_templates, mcp__clientgen__get_template, mcp__clientgen__search_recipients, mcp__clientgen__get_recipient, mcp__clientgen__get_campaign_calendar, mcp__clientgen__list_orders, mcp__clientgen__get_order
+tools: mcp__plugin_clientgen-reach_clientgen__get_brand_profile, mcp__plugin_clientgen-reach_clientgen__list_templates, mcp__plugin_clientgen-reach_clientgen__get_template, mcp__plugin_clientgen-reach_clientgen__search_recipients, mcp__plugin_clientgen-reach_clientgen__get_recipient, mcp__plugin_clientgen-reach_clientgen__get_campaign_calendar, mcp__plugin_clientgen-reach_clientgen__list_orders, mcp__plugin_clientgen-reach_clientgen__get_order, mcp__clientgen__get_brand_profile, mcp__clientgen__list_templates, mcp__clientgen__get_template, mcp__clientgen__search_recipients, mcp__clientgen__get_recipient, mcp__clientgen__get_campaign_calendar, mcp__clientgen__list_orders, mcp__clientgen__get_order
 ---
 
 # ClientGen reader

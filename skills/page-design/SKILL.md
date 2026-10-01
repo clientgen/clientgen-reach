@@ -349,7 +349,7 @@ For "apply this style to both pieces", "match the page to this postcard" or the 
 `page_kit_id`) and `direction` (both, card_to_page, page_to_card). It carries the type pairing,
 headline size, spacing, colors and photo focus, anchored on the confirmed brand brief, and names
 anything one piece cannot take in `capped`. Colors that differ from the firm colors need the
-advisor's okay first (then pass confirm_off_brand as true). Show both previews and what changed on each; each
+advisor's okay first (then set confirm_off_brand to true). Show both previews and what changed on each; each
 piece is approved on its own.
 
 ## Live pages

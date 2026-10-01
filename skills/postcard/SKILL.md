@@ -150,8 +150,8 @@ from); the logo waits for kit approval.
 
 Price is per piece, exactly what `draft_postcard` returns; never quote a number you
 computed yourself. `get_brand_profile`'s `plan_meaning` explains the firm's plan in one
-line (for example "$490 a year list. Pieces a la carte.") if the advisor asks what the
-piece cost is on top of; it is not a price you set or repeat elsewhere.
+line if the advisor asks what the piece cost is on top of; it carries no subscription price
+and is not something you set or repeat elsewhere.
 
 ## 1. Gather
 
