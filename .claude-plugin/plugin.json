@@ -11,5 +11,9 @@
     "url": "https://clientgen.ai"
   },
   "homepage": "https://clientgen.ai",
-  "privacyPolicyUrl": "https://mcp.clientgen.app/privacy"
+  "privacyPolicyUrl": "https://mcp.clientgen.app/privacy",
+  "repository": "https://github.com/clientgen/clientgen-reach",
+  "supportUrl": "https://mcp.clientgen.app/support",
+  "documentationUrl": "https://mcp.clientgen.app/docs",
+  "termsOfServiceUrl": "https://mcp.clientgen.app/terms"
 }
