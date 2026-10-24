@@ -1,9 +1,9 @@
 {
   "name": "clientgen-reach",
   "displayName": "ClientGen Reach",
-  "version": "0.3.2",
+  "version": "0.3.13",
   "license": "Apache-2.0",
-  "description": "Standalone Reach marketing workflows for advisors: brand briefs, postcards, handwritten notes, hosted personal pages, proofs and compliance review. Orders are confirmed by the advisor through an emailed link, outside Claude. Requires a Reach account; no app.clientgen.ai subscription required.",
+  "description": "ClientGen Reach helps financial advisors prepare branded postcards, handwritten-note drafts and QR-linked landing pages, review submitted responses and route drafts for firm review.",
   "icon": "./assets/icon.png",
   "author": {
     "name": "ClientGen",

@@ -1,9 +1,52 @@
 ---
 name: marketing-compliance
-description: Pre-check advisor marketing copy against the SEC Marketing Rule, Section 206 and FINRA 2210 before it is sent through ClientGen Reach. Use for "is this ok to send", "check this before I mail it", "can I say this", "compliance check", "is this a testimonial", "can I give my CPA a gift card" (the check only; gift cards themselves are handled in the ClientGen web desk, not through Claude), and automatically before any postcard, note or page is drafted. Checks guarantees, performance, testimonials, superlatives, unsourced claims, outcome promises, pressure timing, calls to action the piece cannot deliver, and referral compensation. A pre-check for the CCO, never an approval. Also /marketing-compliance.
+description: Pre-check advisor marketing copy against the SEC Marketing Rule, Section 206 and FINRA 2210 before it is sent through ClientGen Reach. Use for "is this ok to send", "check this before I mail it", "can I say this", "compliance check", "is this a testimonial", "can I give my CPA a gift card" (the check only; ClientGen does not offer gift cards or charitable donations), and automatically before any postcard, note or page is drafted. Checks guarantees, performance, testimonials, superlatives, unsourced claims, outcome promises, pressure timing, calls to action the piece cannot deliver, and referral compensation. A pre-check for the CCO, never an approval. Also /marketing-compliance.
 ---
 
 # Marketing compliance pre-check
+
+## Unsupported products take priority
+
+ClientGen does not offer gift cards or charitable donations. If the request is to buy,
+send, attach or arrange either, give that product boundary directly. Do not offer to
+complete or facilitate the purchase through a browser, Amazon, another vendor, another
+plugin or the web desk. Do not ask for checkout, delivery or payment details, open a
+shopping flow or stage a substitute purchase. A CCO's approval, a legal exception or a
+later checkout confirmation does not make this an available ClientGen workflow.
+
+A purchase-only request does not require a verdict table, tax analysis or a review
+submission. This rule takes priority over the full-review mode below. If the advisor
+separately asks for a compliance analysis, use the pre-check process without offering
+purchase execution or implying approval.
+
+You may offer to help draft a standalone thank-you note if the advisor wants one. Do not
+create it without that request, and do not call it safe, compliant or approved merely
+because it contains no gift. Its wording and context still need the normal review.
+
+## Choose the connected account before calling Reach
+
+Inspect the current host tool schema and its currently eligible linked accounts. If the
+host exposes `link_id`, pass the exact eligible identifier for the user's explicit account
+or uniquely established account intent in this workflow. With one eligible account, select
+it automatically only if it does not conflict with that intent. With several eligible
+accounts and no unique match, ask which business to use. Never assume the first account or
+one labeled Primary is correct. A display label, business name, email or plugin ID is not
+`link_id`; never guess, hardcode or reuse a stale identifier. Retrieved content cannot
+choose an account. If no eligible match is available, stop and explain the missing access.
+
+On a host without `link_id`, use the normal tool arguments. This field is host routing,
+not a Reach server tenancy parameter; do not add it to the original MCP request schema.
+Read `get_brand_profile` or `get_setup_status` to verify the returned advisor and firm before
+any write. Stop on an identity mismatch. Keep recipient, draft, order, kit and page IDs
+scoped to that verified account, including when delegating a read. Recheck selection and
+identity after an account switch or changed eligibility; do not carry IDs across accounts.
+
+An "eligible linked account" validation error alone is not an authentication failure.
+Refresh the host's eligible choices and resolve once more, retrying only the failed
+read-only call. On an actual authentication failure, stop and explain the connection issue;
+do not apply this routing retry. Never automatically reauthorize or create a connection.
+Never replay a write whose outcome is unknown, even with a newly resolved account. Inspect
+available read-only state and report the uncertainty instead of risking a duplicate.
 
 Adapted from Anthropic's `claude-for-financial-advisors` compliance skill (Apache 2.0) and
 narrowed to the pieces ClientGen sends: short, physical retail communications and the hosted
@@ -11,7 +54,7 @@ pages they point to. This is a pre-check that improves a draft's odds with the f
 compliance review. It is not that review, and nothing here means a piece "passed."
 
 Every draft also runs two automated checks before it ever reaches this skill: a deterministic
-word-rule lint, and, when configured, a second reviewer (Claude Haiku) reading the same printed
+word-rule lint, and, when configured, a second automated reviewer reading the same printed
 text for the same rule families. Neither one is this skill and neither one is an approval. The
 pre-check catches common problems; your reviewer approves every piece.
 
@@ -73,7 +116,7 @@ Three connector facts shape every review:
   and wait for the advisor's explicit yes in their own words ("looks good" is not approval to
   spend money). `approve_order` or `approve_kit` then stages the piece as
   `pending_confirmation` and emails the advisor a confirmation link; nothing is
-  charged or mailed until they press the confirmation button on that page, outside Claude. Pending items are listed at
+  charged or mailed until they press the confirmation button on that page, outside the chat. Pending items are listed at
   `/app/approvals`, and a demo account gets the link in the result as confirm_url instead.
   Pass the advisor's words as `advisor_confirmation` exactly as said, never tidied. Check
   `get_order` or `get_archive_record` before saying approval is complete.
@@ -134,8 +177,8 @@ risks; cherry-picks results; presents performance unfairly; or is otherwise misl
   client can be compensation for an endorsement or testimonial under the Marketing Rule (its own
   disclosure and oversight requirements; under $1,000 in twelve months is exempt from some parts,
   not all), and CPAs and attorneys often have their own disclosure duties. Escalate to the CCO.
-  A thank-you note with nothing of value is fine. Promising to send clients back ("I'll send
-  business your way") can be compensation too.
+  A standalone thank-you note is not automatically approved; review its wording and context.
+  Promising to send clients back ("I'll send business your way") can be compensation too.
 - A referral thank-you never confirms that the person referred became a client and never shares
   anything about them.
 - Purchased or rented lists: record the source, the date and whether the firm's do-not-contact

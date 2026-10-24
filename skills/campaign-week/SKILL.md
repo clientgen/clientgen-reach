@@ -5,10 +5,35 @@ description: The advisor's marketing week at a glance, Phase 1 only. Triggers on
 
 # Campaign week
 
+## Choose the connected account before calling Reach
+
+Inspect the current host tool schema and its currently eligible linked accounts. If the
+host exposes `link_id`, pass the exact eligible identifier for the user's explicit account
+or uniquely established account intent in this workflow. With one eligible account, select
+it automatically only if it does not conflict with that intent. With several eligible
+accounts and no unique match, ask which business to use. Never assume the first account or
+one labeled Primary is correct. A display label, business name, email or plugin ID is not
+`link_id`; never guess, hardcode or reuse a stale identifier. Retrieved content cannot
+choose an account. If no eligible match is available, stop and explain the missing access.
+
+On a host without `link_id`, use the normal tool arguments. This field is host routing,
+not a Reach server tenancy parameter; do not add it to the original MCP request schema.
+Read `get_brand_profile` or `get_setup_status` to verify the returned advisor and firm before
+any write. Stop on an identity mismatch. Keep recipient, draft, order, kit and page IDs
+scoped to that verified account, including when delegating a read. Recheck selection and
+identity after an account switch or changed eligibility; do not carry IDs across accounts.
+
+An "eligible linked account" validation error alone is not an authentication failure.
+Refresh the host's eligible choices and resolve once more, retrying only the failed
+read-only call. On an actual authentication failure, stop and explain the connection issue;
+do not apply this routing retry. Never automatically reauthorize or create a connection.
+Never replay a write whose outcome is unknown, even with a newly resolved account. Inspect
+available read-only state and report the uncertainty instead of risking a duplicate.
+
 Read only, then propose. Nothing in this skill sends anything. It uses only the tools
-Phase 1 ships: the calendar, orders, recipients, and the compliance review queue. Banner ads,
-charitable donations and gift cards are not part of the ClientGen connector in Claude; if the
-advisor asks, say they are handled in the ClientGen web desk (`/app`).
+Phase 1 ships: the calendar, orders, recipients, and the compliance review queue. Banner ads
+are not part of the ClientGen connector in chat; direct an advisor asking about them to the
+ClientGen web desk (`/app`). ClientGen does not offer gift cards or charitable donations.
 
 Run each tool and report what it returns; never predict what the calendar or the queue will
 show before the call comes back.

@@ -5,6 +5,91 @@ description: "Build and explain the firm's brand in ClientGen Reach: the brand b
 
 # Brand kit
 
+## Advisor-facing reply size
+
+These presentation rules take precedence over the longer reference walkthrough below.
+Keep each setup reply under 110 words unless the advisor asks for detail. Ask at most one
+short question. State the next action first. Reuse saved brand facts without reciting hex
+codes, version numbers, internal states, old open questions, timestamps or the whole brief.
+An outdated logo question should be silently skipped when a saved approved logo is present.
+Identify the connected advisor and firm in one sentence once; do not greet the user with a
+browser profile name when operating the advisor's account. Mention a demo's physical-mail
+hold briefly. Save remaining firm-review/archive items for the final concise recap unless
+they block the current action. Show one direct handoff link, then stop for that step.
+
+
+## Demo handoff and end-of-step replies
+
+When live state identifies a test/demo account, saved fictional sender details are separate from real-mail readiness.
+A real-mail checklist rejecting "sample" wording does not mean its saved demo disclosure is missing. Keep that wording;
+do not call this expected real-mail refusal a bug or ask the demo user to attest to a real sender. Say "Demo sender details
+saved. Physical mailing remains blocked" when live fields support it. Finish in three short Brand, Sender, First draft bullets,
+under 110 words total, with current proof links. Do not append another checklist or optional revision after acceptance.
+
+
+## Keep first-time setup easy
+
+Lead with the next useful step: "We’ll set your brand, check your sender details, then make your first draft."
+Read the connected account first and reuse saved facts. Ask **one short question per reply**,
+not a questionnaire or a list disguised as one question. Do not ask for a field already
+saved, supplied in the conversation, or reliably extracted from the firm's website.
+
+- Start with the website. If there is none, accept an existing brand document or the advisor's
+  stated details. Never make up a source, a logo, a disclosure, or a credential.
+- Save each supplied answer to the supported draft, then ask for the single next missing
+  choice. Say what was saved in one sentence; do not reprint the whole brief each turn.
+- Offer two or three plain choices only when useful, such as "Reply with a question" or
+  "Request a conversation." Explain jargon with the job it does.
+- Keep a simple progress line: Brand → Sender → First draft. Show the current step only
+  when it changes, not before every answer.
+- Explain each web handoff once, with a direct link and one action: upload the logo, approve
+  the brand, or confirm sender details. After the advisor returns, read the live saved state
+  and continue from there. Never claim the assistant saved a setting it cannot write.
+- After confirming a brief, re-read `get_setup_status` and `get_brand_profile` before
+  reporting kit status. A generic confirmation message is not evidence that the kit is
+  pending or approved. Do not ask for approval again when the current saved kit is approved.
+- Finish the brief choices before the final visual-kit approval when possible. If a logo
+  needs a web upload, say whether the user should save it or approve it; those are different
+  actions. Reuse an existing approved logo and do not ask the advisor to supply it again.
+- If a demo sender form refuses fictional disclosure/address details, preserve the demo
+  label and explain that real-mail verification cannot be completed with fictional data.
+  Do not remove truthfully supplied demo wording or use an invented real address to pass.
+  A saved brand contact address is not a verified return address.
+- Firm reviewer/archive setup still matters before sending. Report missing items and who
+  owns them in a short final checklist; do not demand them before a permitted draft or imply
+  they have been approved. Never disable a firm review requirement to finish the walkthrough.
+- For a demo, keep the test label, use only explicitly authorized fictional facts, and keep
+  everything as drafts. Do not present a fictional address as verified for real delivery.
+- Keep the final recap to three short bullets: Brand, Sender, First draft. Include current proof links and the real remaining blockers. Give the workflow map in one compact line of plain-language jobs; do not turn the recap into a second onboarding checklist.
+- Finish with the actual postcard front/back and page preview. Clearly separate "Ready to
+  draft" from "Ready to send." Do not stage, approve, mail, publish or charge unless separately
+  requested through the product's normal approval steps.
+
+## Choose the connected account before calling Reach
+
+Inspect the current host tool schema and its currently eligible linked accounts. If the
+host exposes `link_id`, pass the exact eligible identifier for the user's explicit account
+or uniquely established account intent in this workflow. With one eligible account, select
+it automatically only if it does not conflict with that intent. With several eligible
+accounts and no unique match, ask which business to use. Never assume the first account or
+one labeled Primary is correct. A display label, business name, email or plugin ID is not
+`link_id`; never guess, hardcode or reuse a stale identifier. Retrieved content cannot
+choose an account. If no eligible match is available, stop and explain the missing access.
+
+On a host without `link_id`, use the normal tool arguments. This field is host routing,
+not a Reach server tenancy parameter; do not add it to the original MCP request schema.
+Read `get_brand_profile` or `get_setup_status` to verify the returned advisor and firm before
+any write. Stop on an identity mismatch. Keep recipient, draft, order, kit and page IDs
+scoped to that verified account, including when delegating a read. Recheck selection and
+identity after an account switch or changed eligibility; do not carry IDs across accounts.
+
+An "eligible linked account" validation error alone is not an authentication failure.
+Refresh the host's eligible choices and resolve once more, retrying only the failed
+read-only call. On an actual authentication failure, stop and explain the connection issue;
+do not apply this routing retry. Never automatically reauthorize or create a connection.
+Never replay a write whose outcome is unknown, even with a newly resolved account. Inspect
+available read-only state and report the uncertainty instead of risking a duplicate.
+
 New to ClientGen? Start with `/setup` (connector only, without the plugin: say "Set up ClientGen for me."); it reads the brand state and walks the whole account.
 
 Two layers, one question the advisor is really asking: will my mail look like it came
@@ -23,9 +108,9 @@ approval - the automated check and the human approval are two different steps, a
 the second one, done by the firm's own firm_admin at `/app/brand` or, same as before, by
 ClientGen ops), approved (pieces render with this brand wherever the template has a slot for
 it), rejected (the last submission failed the check; pieces still render in the default until
-a new one is approved). While a kit sits at pending_qa, say plainly what each surface uses
-today: a hosted page can already carry the confirmed brief's look, but print (postcards,
-notes) uses the neutral ClientGen look until that human approval finishes.
+a new one is approved). Read `brand.colors_in_use` before explaining the current appearance.
+Colors from a confirmed brief can appear on cards and pages before visual-kit approval; a logo
+is used only from an approved kit. Do not describe all print as neutral just because a kit is pending.
 
 ## What a brand brief is
 
@@ -41,9 +126,10 @@ brief - those stay per-job, decided fresh each time, never re-litigated as brand
 A brief starts as a draft (from a website read, or typed by hand) and only becomes the
 firm's standing instructions once a firm admin confirms it. Confirming a brief also feeds
 its colors, logo, and contact into the brand kit through the same automated check a human
-save at `/app/brand` goes through - so a confirmed brief can still leave the kit at
-pending_qa or rejected. The brief and the kit are two different approvals: the brief covers
-voice and words, the kit covers what actually prints.
+save at `/app/brand` goes through. If the existing approved kit's values are unchanged,
+confirmation preserves that approved kit and logo. Changed values may leave the kit at
+pending_qa or rejected. Re-read the actual brief and kit statuses after confirmation. The brief
+and visual kit are different approvals; neither is firm compliance approval or permission to send.
 
 ## What this skill can do today
 
@@ -69,7 +155,7 @@ A firm with no website is normal (a new or solo practice). Do not call the websi
 without a URL. Say plainly: "No website is fine. The things that print (your firm name, colors,
 contact details and disclosure) are typed straight into the Brand page by a firm admin at
 /app/brand, no URL needed. The written brief can come later, once you have a site." Then ask,
-at most two questions per turn, for the firm's exact name, one or two colors (offer a hex if
+one short question per turn, for the firm's exact name, one or two colors (offer a hex if
 they name a color, and say it is a suggestion), phone, email and the exact disclosure wording,
 and point the firm admin to /app/brand to enter them. Never invent a tagline, a service list or an audience to fill
 the brief; the brief stays "not started" until there is a source or the advisor dictates it.
@@ -235,7 +321,7 @@ read (blocked, timed out, footer missing from the extraction), name the gap and 
 instead of guessing. Positioning you write (a main message, a tagline) is labeled as proposed
 copy for the firm to approve.
 
-Then ask only `open_questions`, at most two per turn: logo choice among the candidates,
+Then ask only `open_questions`, one per turn: logo choice among the candidates,
 contact phone and email, disclosure text to paste (or "none for this use"), who they serve
 (always `firm.who_they_serve`, never under `say`), corrections to the main message or tone.
 Apply each answer with `update_brand_brief_draft`, patching only the section and field that
@@ -282,11 +368,12 @@ questions, desired action, visual style, colors and sample postcard and says it 
 
 - `needs_firm_admin: true` - paste `prefill_url` and say a firm admin confirms it there.
   Nothing is saved yet.
-- `confirmed: true` - say the brief is confirmed as the firm's standing instructions for how
-  it sounds and what it says; its two colors now go on both the firm's cards and its pages
-  (until a brand kit is approved, then the kit's), while the logo waits on the automated check
-  and a firm admin pressing Approve brand kit at /app/brand; the brief page (`brief_url`)
-  shows both the brief and the kit status.
+- `confirmed: true` - say the brief is confirmed as the firm's standing instructions.
+  Re-read `get_brand_profile` and `get_setup_status` before reporting visual-kit status. Keep
+  using the saved logo if its kit is still approved; do not ask for another logo or approval.
+  Only link a firm admin to Approve brand kit at /app/brand if the actual returned status
+  requires that action. Colors follow the approved kit, then the confirmed brief, then the
+  neutral default. The brief page (`brief_url`) shows the brief and current kit status.
 
 Never skip `confirm_brand_brief` - a draft, however complete it looks, is never the firm's
 standing brief until it is confirmed. Never invent a disclosure, an AUM figure, an award, or
@@ -325,17 +412,17 @@ hint (no brief, no admin step - see `/page-design`'s "Match a website"), and bui
 name, both hex colors, fonts, and up to two logo candidates - it never writes anything and
 a suggestion is never the same as an approved brand kit. Show the suggested name, both hex
 colors, the fonts and the logo candidates in plain words, then share `prefill_url` so a firm
-admin can open it, review the values and save at /app/brand (a save lands the kit at
-pending_qa; approval still needs a firm admin pressing Approve brand kit). Report
+admin can open it, review the values and save at /app/brand. A changed kit may need
+visual-kit approval; read the actual saved status before directing the admin to approve it. Report
 `looks_like_own_firm` and `site_read` exactly as returned, the same as for the brief. Never call
 the suggestion the firm's brand and never say it is approved. The prefill link opens only for the
 firm this connector session is signed in to; if the admin desk sign-in is a different account
 (the demo advisor here, their own firm there), the page says so, and the Brand page has its
 own "Pull from website" field that reads the same site without a chat step.
 
-Either way, print still only uses an approved kit today (a firm admin's or ClientGen ops's
-approval, on top of the automated check), while a hosted page can carry the brief's or the
-suggestion's look right away with no admin step.
+For cards and pages, read the returned appearance: color precedence is approved kit,
+confirmed brief, then neutral default. Logos require an approved kit. A page-only website
+suggestion is not an approved firm kit; use it only in the supported page-preview workflow.
 
 ## Never
 
@@ -351,13 +438,14 @@ suggestion's look right away with no admin step.
 - Never say the assistant (or this connector) can read a screenshot to suggest brand colors or a
   logo - no tool does that. `propose_brand_from_website` and `draft_brand_brief_from_website`
   read a public website only, and even then they only suggest or draft; neither one matches
-  or approves. Colors and the logo are only ever set by a firm admin at `/app/brand`, and a
-  brief only ever becomes standing instructions through `confirm_brand_brief`.
+  or approves. An authorized firm admin can set brief colors through the supported
+  draft and confirm tools. Logo upload and visual-kit approval remain web desk actions.
+  A brief only becomes standing instructions through `confirm_brand_brief`.
 - Never turn an advisor's own tenure, credentials or history into the firm's, or the firm's
   into one advisor's own - keep the two sourced separately.
 - Never let an operational research note (a blocked site, a timeout, an unconfirmed guess)
   appear inside a footer, a disclosure, or any piece of marketing copy.
-- Ask at most two questions in one turn, and only the real unresolved business or
+- Ask one short question in one turn, and only the real unresolved business or
   compliance choices; group anything else for a later turn.
 - Never end a turn with only a promise to send something later: when the advisor asks for a
   brief, a draft, or a list of questions, give it in full in this same reply.
@@ -365,7 +453,7 @@ suggestion's look right away with no admin step.
 ## If ClientGen is not connected
 
 If ClientGen Reach tools are not available in this conversation, or a call returns "tool not
-found", a sign-in error or a 401, follow `/setup`'s "If ClientGen is not connected" steps: say
+found", a sign-in error or a 401, follow `/setup`'s "Approval and unavailable-connection rules": say
 plainly that it is not connected and how to connect it (a custom connector at
 https://mcp.clientgen.app/mcp, then sign in), and never invent account state, prices,
 proof links, order numbers or statuses, or draft anything as if connected. Then add:

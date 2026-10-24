@@ -1,17 +1,29 @@
 # ClientGen Reach
 
-ClientGen Reach is a plugin for Claude that lets a financial advisor prepare real marketing
-pieces from inside a conversation: printed postcards, pen-on-paper handwritten notes, and
-hosted personal pages for booking, RSVP or replies, all built from ClientGen's approved
-templates and sent to the advisor's own mailing list.
+Advisor postcards & notes
 
-Claude drafts, previews and pre-checks the piece. ClientGen prints, pens, hosts and keeps the
-record. Nothing is purchased, mailed or published from a tool call: after the advisor says yes
-to the actual proof, audience and price, the order is staged and the advisor receives a
-confirmation link by email that opens a preview. Only pressing the confirmation button on
-that page, outside Claude, confirms it.
+ClientGen Reach helps financial advisors create real outreach inside your Claude. Prepare branded postcard and handwritten-note drafts, connect postcards to matching landing pages with QR codes, and review the responses people submit.
 
-For financial professional use only. Not investment, legal or tax advice.
+Start with a client conversation, an event or a reason to say thank you. Describe what you have in mind, and Reach guides you through the details. Use your firm's approved brand and designs, see real proofs and ask for changes in the same conversation.
+
+Start with something you need to get done:
+• Invite clients to an event with a postcard and matching RSVP page.
+• Follow up on a retirement-planning conversation with a postcard and reply page.
+• Make a thank-you personal with a handwritten-note draft.
+
+Review the postcard's front and back, your message, the matching page and the quoted price before taking the next step. When a page is published, review submitted replies, RSVPs and booking requests, with recipient attribution where available. See what people actually submit so you can plan your follow-up.
+
+Built to work with your firm's review process. Route drafts to your firm's compliance reviewer and retrieve review records. Automated content checks help flag issues; they do not replace firm approval or guarantee compliance.
+
+Start with one draft. Reach guides you through any missing brand or sender details, one step at a time. A ClientGen Reach account and your firm's permission to connect are required. Available actions depend on your account and firm permissions.
+
+Current availability: prepare and review drafts. Nothing is charged, mailed or published from chat. Orders are confirmed only by the advisor on the emailed confirmation page, and printing and mailing are not yet available. Reach supports marketing preparation, not investment advice.
+
+## Try a draft in your conversation
+
+- Use ClientGen Reach to draft an event postcard and RSVP page. Ask one question at a time. Keep both as drafts.
+- Use ClientGen Reach to draft a retirement follow-up postcard and reply page. Ask who it is for and what I want to say.
+- Use ClientGen Reach to draft a handwritten thank-you note. Ask who it is for and what I want to thank them for.
 
 ## What you need
 
@@ -24,8 +36,8 @@ For financial professional use only. Not investment, legal or tax advice.
 
 Bring recipients from a CSV, a pasted list, or another source you are authorized to mail.
 Available workflows depend on the connected account and the capabilities enabled for it.
-Household banner ads, charitable donations and gift cards are not part of this plugin; they
-are handled in the ClientGen web desk.
+Household banner ads are handled in the ClientGen web desk, not this plugin. ClientGen does
+not offer gift cards or charitable donations.
 
 ## Install in Claude
 
@@ -67,9 +79,10 @@ on surfaces that support agents; ordinary Claude chat does not load agents.
 - The plugin contains instructions (skills and one agent definition), an icon, and the
   connector declaration. It ships no scripts, hooks or executable code and installs no
   packages.
-- The only network destination is the ClientGen connector at `https://mcp.clientgen.app/mcp`.
-  What you type in the chat, and the account data the tools return (your firm, brand,
-  recipients, drafts, orders, calendar), pass between Claude and that server.
+- The only MCP endpoint this package declares is `https://mcp.clientgen.app/mcp`.
+  Tool inputs Claude sends, which may include relevant excerpts from your conversation,
+  and the account data the tools return pass between Claude and that server. Supported
+  website research can fetch public sites the advisor supplies.
 - Connected tool calls read and may store account data in Reach: recipients you add, drafts,
   proofs, approvals, page responses and the write-once compliance record. The plugin itself
   holds no customer records.

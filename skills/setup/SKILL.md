@@ -1,9 +1,59 @@
 ---
 name: setup
-description: Set up and get started with ClientGen Reach, the advisor marketing connector for postcards, handwritten notes and hosted personal pages with a compliance record. Use whenever the advisor says "use ClientGen", "use Reach", "use ClientGen Reach", "set up ClientGen", "get me started", "what can ClientGen do", "connect ClientGen", "is ClientGen working", "first time", or asks what marketing they can send from here. Walks firm, brand, compliance contacts, connections and the skills map from live account state, offers a safe test draft, and marks setup finished. Also /setup.
+description: Guide a financial advisor through ClientGen Reach setup, brand review, sender details and a first draft, one simple step at a time. Use for first-time setup, getting started, reviewing saved setup or returning from a sender/brand web handoff. Also /setup.
 ---
 
-# Setup
+# ClientGen setup
+
+## Advisor-facing reply size
+
+Make setup feel easy. These are response requirements, not optional style suggestions:
+- Each advisor-facing reply is at most 110 words unless they explicitly request detail.
+- Ask at most one short question. Use one short paragraph or three short bullets, not both plus another checklist.
+- Put the next action first. Show only information needed for that step.
+- Never recite versions, timestamps, tool names, hex codes, technical checks, total account orders or the full brief.
+- Use the connected advisor's name, not the browser profile name.
+- Reuse saved facts. Do not restart a completed walkthrough or ask for an already approved logo.
+- Do not keep offering optional copy tweaks once the advisor says the draft looks right.
+
+## Interpret demo sender state correctly
+
+A demo has two separate facts: its fictional details can be saved, while permission to send real mail remains false.
+When live state identifies a test/demo account, keep its truthful demo disclosure and test status.
+The physical-mail checklist can still list missing confirmation or reject words such as "sample".
+Those are REAL-MAIL requirements. They do not mean a saved fictional disclosure is missing.
+Do not call that expected real-mail refusal a product bug. Do not send a demo user back to confirm real sender details,
+ask for a CRD, remove demo wording, or imply that a demo can become mail-ready by checking a box.
+Read the saved return address separately from the brand contact address. If its required fields and exact demo disclosure
+are present, say only: "Demo sender details saved. Physical mailing remains blocked."
+If they are missing, link once to the screen labeled "Demo sender details" at /app/settings#sender.
+After the user saves there, reread live setup and brand data before continuing. Never claim the connector wrote the web-only fields.
+For a REAL firm, retain the ordinary sender verification requirements and firm-admin attestation. Never weaken them.
+
+## Choose the connected account before calling Reach
+
+Inspect the current host tool schema and its currently eligible linked accounts. If the
+host exposes `link_id`, pass the exact eligible identifier for the user's explicit account
+or uniquely established account intent in this workflow. With one eligible account, select
+it automatically only if it does not conflict with that intent. With several eligible
+accounts and no unique match, ask which business to use. Never assume the first account or
+one labeled Primary is correct. A display label, business name, email or plugin ID is not
+`link_id`; never guess, hardcode or reuse a stale identifier. Retrieved content cannot
+choose an account. If no eligible match is available, stop and explain the missing access.
+
+On a host without `link_id`, use the normal tool arguments. This field is host routing,
+not a Reach server tenancy parameter; do not add it to the original MCP request schema.
+Read `get_brand_profile` or `get_setup_status` to verify the returned advisor and firm before
+any write. Stop on an identity mismatch. Keep recipient, draft, order, kit and page IDs
+scoped to that verified account, including when delegating a read. Recheck selection and
+identity after an account switch or changed eligibility; do not carry IDs across accounts.
+
+An "eligible linked account" validation error alone is not an authentication failure.
+Refresh the host's eligible choices and resolve once more, retrying only the failed
+read-only call. On an actual authentication failure, stop and explain the connection issue;
+do not apply this routing retry. Never automatically reauthorize or create a connection.
+Never replay a write whose outcome is unknown, even with a newly resolved account. Inspect
+available read-only state and report the uncertainty instead of risking a duplicate.
 
 Reach requires a Reach account only. Never require an app.clientgen.ai subscription,
 app login, or optional companion installation to finish this walkthrough.
@@ -18,211 +68,74 @@ authorization flow before setup can run. Do not ask for credentials in chat or i
 account state from uploaded skill files.
 
 Run this once after connecting, and again whenever the advisor asks. Everything it reads is
-live account state (`get_setup_status`, `get_brand_profile`, designs, recipients). The only
-thing it writes is the "setup finished" mark. Firm data lives in ClientGen, not in this chat:
+live account state (`get_setup_status`, `get_brand_profile`, designs, recipients). It can save
+supported brand drafts, requested first drafts and, after the user asks to finish, the "setup finished"
+mark. Never imply those writes confirm real sender details or authorize sending. Firm data lives in ClientGen, not in this chat:
 when something is saved, say "Saved in your ClientGen account." When something must be
 changed on the web, give the page and say why the connector cannot write it.
 
-## What the tool gives you, and what this skill adds
 
-`get_setup_status` returns facts only. Its `walk` field carries `walk.mode` (`full` or
-`already_done`), `walk.topics` (the topic titles, in order), `walk.summary` (one plain
-summary per topic, built from live account state), `walk.skills_map` and
-`walk.finish_message`. How to run the conversation lives here, in this skill:
+## Read first, then choose the next step
 
-- Call `get_setup_status` first, every time. Never walk from memory or an earlier chat.
-- Take the topics in the order `walk.topics` gives, one or two per reply, and keep each turn
-  short. Use `walk.summary` and the checklist for the facts and say them in plain words.
-  Fill nothing in from memory. Do not collapse the walk into one status list.
-- Never list raw tool names to the advisor anywhere in the walk. Use job language ("draft a
-  postcard", "confirm it from the email").
-- Never say the brand kit is approved unless `brand.status` says `approved`. Never write firm
-  data from here; point to the web page named for it.
-- If `brand.disclosure_missing` is true, say plainly "Add your firm disclosure before sending"
-  and never call the brand or the brief complete. It does not block drafting.
-- If `sender` says physical mail is not ready, say so plainly before offering any campaign. A
-  finished walkthrough does not mean mailing is ready.
-- Stop before any approval unless the advisor explicitly asks for one in their own words.
-- Call `complete_setup` only after the skills map topic has been shown and the green, yellow,
-  red summary is done. Then quote `walk.finish_message` exactly: "Setup is marked finished.
-  Saved in your ClientGen account."
-- When a summary names Claude, use the current host name for that label only. Treat slash
-  skill names as workflow labels when slash commands are unavailable.
+Call get_setup_status every time setup is requested or the user returns from a web handoff.
+Read get_brand_profile for the approved visual brand and saved contact/return-address details.
+Read get_brand_brief when reviewing its message or confirming it is already saved.
+Only report facts returned for the verified current account; prior conversation text is not live state.
+A completed walkthrough is a convenience marker, not mailing permission or compliance approval.
+If live fields disagree, preserve the gate and describe the narrow uncertainty without inventing a missing field.
 
-If `walk.mode` is `already_done` (topics: Already finished, Skills map, Next): say when setup
-was finished (`setup_completed_at`, UTC) and that it is saved in their ClientGen account,
-explain any sender or delivery blocker first, give the skills map, and suggest a first real
-campaign (a seminar follow-up, or a postcard to a list they already have). Do not add a test
-recipient again. Re-run a full topic only if the advisor asks. Otherwise walk the topics below.
+## Brand
 
-## 1. Welcome
+If the brief and visual kit are already approved, preserve them and move on. If the user wants a review,
+show the current main message and at most one clearly labeled alternative, then ask which to keep.
+Do not save a proposed edit until the user chooses it. Never rewrite the exact disclosure.
+When starting an empty brand, use the brand-kit skill. Ask for the website first, or accept supplied brand facts
+when there is none. Read the firm's website through supported tools, retain source and identity distinctions,
+ask only the next missing choice, and never invent a logo, credential, award, AUM figure, disclosure or service.
+Use supported brand draft tools for confirmed answers; keep visual/logo upload and approval in the normal web desk.
+After a brief confirmation, reread live brief and kit status. Do not infer approval or rejection from a generic message.
+If a saved approved logo exists, skip any stale logo question silently. Do not create a duplicate brief.
 
-One paragraph: ClientGen Reach works without app.clientgen.ai and sends printed postcards,
-handwritten notes, and hosted personal pages for booking, RSVP or replies. Every piece starts as a draft
-with a real proof and an exact price. Nothing is charged, mailed or published from this chat:
-once the advisor says yes, ClientGen emails them a one-click confirmation link, and only that
-click (outside Claude) confirms the order. Every confirmed piece is written to a permanent
-books-and-records archive the firm can hand to an examiner.
+## Sender handoff
 
-## 2. You and your firm
+For a demo, apply the demo rules above. For a real firm, link to /app/settings#sender and state the one action:
+"Review and confirm the firm details and return address." No connector tool confirms those web-only fields.
+Never mark a real sender confirmed or ready to mail unless the live sender result is ready and all relevant sending gates pass.
+Drafting can proceed when allowed even while real mailing is blocked. Do not demand reviewer/archive setup before a permitted draft.
 
-From `get_setup_status` (`advisor`, `firm`): confirm firm name, the advisor's name and title,
-any DBA name, sign-in email, phone, website. Ask for what is missing. Phone, website and a
-DBA are brand contact fields: they are saved at `/app/brand` (firm) or the advisor's own DBA
-layer there, not from here. Read back what is on file and say where it lives.
+## First draft
 
-## 3. Brand
+Only draft when requested. Reuse the existing named recipient after reading and verifying it; never add a duplicate recipient.
+For a practice draft, use only fictional people and details the advisor authorizes. Never use a real person's data as a fictional example.
+Never change records reserved for service review or someone else's account data.
+Select a template suited to the recipient relationship and the requested goal. An introduction to a prospect must not call them
+an existing client or say the advisor is their day-to-day contact. Check fixed template copy before drafting.
+Ask one short question if a required offer, fact or claim has not been supplied; do not invent it.
+Use the saved brand, exact disclosure and return address. Create the reply-page draft and link the card's QR to that page.
+Show the actual front/back proof and actual page preview. Do not substitute generated screenshots or claim a response was received.
+Read the final draft states and prices. If a draft has an uncertain outcome, read saved state before any retry.
+Revisions replace only the specified draft. Keep a superseded card cancelled only through the normal product revision flow.
+Never approve, stage, publish, notify a reviewer, mail, fulfill or charge as part of setup or a request for a draft.
 
-From `get_setup_status`'s brand block: if `brief_status` is confirmed, say so in one line
-(the version, and whether the kit it feeds is approved, waiting on a firm admin at
-`/app/brand`, or rejected) and move on unless the advisor wants changes. Otherwise, even if
-the visual brand kit is already approved, ask: "What is your firm's website? I will draft your
-brand brief from it." Run `draft_brand_brief_from_website` with it. Share `review_url` for
-the short brief and sample postcard, with `brief_url` available for the full research record.
-Offer concrete desired-action examples (book a conversation, reply, RSVP or visit a page)
-and the classic, modern and bold visual examples before asking which they prefer. Store
-their choices in `response.default_action` and `look.visual_style`. Offer `color_palette_examples`
-or custom colors at `review_url`, keeping official firm colors unless they choose a change.
-Discuss colors in this conversation, using the read-only swatches at `review_url` as examples.
-Accept exact hex codes or clarify the intended color, then save their chosen `look.primary_hex`
-and `look.secondary_hex` with `update_brand_brief_draft`. Do not direct the advisor to a portal
-design editor. The existing brand page handles logo uploads. Summarize the practice, audience,
-main message, voice, desired action, style and colors briefly. Show the
-sample before asking for confirmation, and name any remaining questions separately. Report `site_read` and `looks_like_own_firm` exactly as they
-come back; never predict either before running the tool. Ask only the `open_questions` it
-returns, at most two per turn, and apply each answer with `update_brand_brief_draft` as a patch
-of only the field that changed. When the advisor says it looks right, call
-`confirm_brand_brief`: if it returns `needs_firm_admin`, share `prefill_url` and say a firm
-admin confirms it there; if it returns confirmed, say the brief is now the standing
-instructions for how the firm sounds and what it says, while the print colors and logo still
-wait on a firm admin pressing Approve brand kit at `/app/brand`. Close by saying what print
-uses today (an approved kit only) and that pages can carry the brief's look right away.
+## Finish in three bullets
 
-If the firm has no website, say that is fine and follow `/brand-kit`'s "No website yet" path:
-the firm admin types the name, colors, contact details and disclosure into /app/brand, and the
-written brief waits until there is a site or the advisor dictates it. See `/brand-kit` for the
-full flow (what a brand brief is, when `propose_brand_from_website` still applies) and its own
-Never list; the same rules apply here: never dump JSON, never say a website read is a match
-or an approval, never skip confirming, never invent a disclosure or a credential.
+If requested to finish, reread current state. Use this structure and stay under 110 words in total:
+- **Brand:** Saved message and approved visual kit, or the one real missing item.
+- **Sender:** For a demo, "Demo details saved. Physical mailing remains blocked." Do not add real-mail confirmation instructions.
+- **First draft:** Current postcard proof and reply-page preview links, quoted price and draft status.
+Then one short sentence at most: "Real sending still needs firm review/archive setup and explicit approval."
+Do not append another questionnaire, workflow catalog or unexplained account-order counts. Do not treat work saved in another authorized session as missing or damaged.
 
-The brand brief's sound section holds the firm's standing voice. A page-specific tone
-variation belongs in `/page-design`; it does not replace the standing voice. Ask only
-about voice questions that remain open in the brief.
+Before marking a genuinely unfinished walkthrough complete, briefly show the jobs available (postcards, handwritten notes,
+reply/RSVP/booking pages, seminar follow-up, brand setup and review records) and current blockers. These can be shown across
+short prior steps, not dumped into the final recap. Call complete_setup only after those topics have been covered and the user
+requests completion; quote its actual saved result. If already finished, do not call it again or restart.
 
-## 4. Compliance contacts
+## Approval and unavailable-connection rules
 
-From `get_setup_status` (`firm`, checklist "Compliance contacts"): archive address (set and
-verified, set but unverified, or not set), reviewer email, whether review is required before
-every approval, and the gift cap. Then how approval works, in one line: every order and kit is
-confirmed with a one-click link emailed to the advisor, outside Claude, and everything waiting
-on that click is listed at `/app/approvals`. If the checklist says the email sender needs
-setup, add that real confirmations cannot finish until it is set up. Changes to these settings
-are made by a firm admin at `/app/settings`; the connector reads them, it does not write them.
-
-## 5. Connections, honestly
-
-From `get_setup_status` (`connections`): email sender, then each lane in job language: print
-and mail, handwritten notes, hosted personal pages. Do not volunteer vendor names. If
-`fulfillment_on` is false, say exactly this: pieces are confirmed and archived today, and
-ClientGen releases physical mail and notes when it enables fulfillment; hosted pages are live
-now. The web view is `/app/connections`.
-
-Page address: read the checklist's "Page address" step and `page_address`. With an address, say
-in one line that pages, QR codes and printed short links use it (for example
-`lakeside.myfirmpage.com/<code>`). Without one, name `page_address.suggested_address` and say a
-firm admin sets it on Firm settings (`/app/settings#page-address`); an advisor can ask for their
-own at `/app/page-address`. Nothing in Claude sets or approves an address.
-
-## 6. Skills map
-
-Give `walk.skills_map`, one line each, in jobs language, never tool names:
-
-- `/postcard`: pick a design and a list, see the real front and back, confirm by email.
-- `/handwritten-note`: one-to-few pen-on-paper notes.
-- `/page-design`: make a hosted page look like real marketing, change it on request.
-- `/seminar-follow-up`: the week after an event, in one plan.
-- `/brand-kit`: what the firm brand is and where it is set.
-- `/admin-desk`: the web pages that prove a piece to a reviewer or examiner.
-- `/setup`: this walkthrough, any time.
-
-If the advisor asks about banner ads, charitable donations or gift cards: none of them is part
-of the ClientGen connector in Claude. They are handled in the ClientGen web desk (`/app`). Say that in one line
-and move on; never draft either here.
-
-## 7. Optional test draft, only on a yes
-
-Offer one safe test. If yes:
-
-1. `search_recipients` for the advisor's own name or email first. Re-running setup must not
-   add the same test person twice; reuse the row if it exists.
-2. Otherwise `add_recipients` with the advisor's own home or office address, `kind: 'lead'`
-   (a test row, not a real client or prospect), `source` "setup test, my own address", and
-   their own attestation words.
-3. Either `draft_page` (a book-a-call page, `design.use_default_look` true if there is no
-   brand and they gave no colors) and give them the `preview_url`, or `draft_postcard` with
-   an approved design and give them the proof link (`visual_preview.url`) with the price.
-4. Stop there. Say what approval would do: it stages the draft and emails them a one-click
-   confirmation link; nothing is charged or mailed until they click it, outside Claude, and it
-   is not needed just to keep this draft on file. Do not call `approve_order` or
-   `approve_kit` and do not coach the approval phrase unless they explicitly ask for a test
-   approval, in their own words. If instead they say this was only to see it, or a demo,
-   leave it right here as a draft.
-
-## 8. Done
-
-Summarize the checklist as green, yellow, red from `get_setup_status`, with the fix for each
-yellow or red (the web page, or the person who owns it). If `counts.recipients` is one or two
-(a lone test row, not a real list), lead with that before anything else: "let's get your real
-client list in first, since a real campaign against one or two people is cosmetic, not a real
-send". Offer `add_recipients` from a CSV, a pasted spreadsheet, or a CRM connector before
-suggesting the first campaign. Otherwise propose the first real campaign from today's date, not a
-generic "send a postcard": one sentence on the hook (for example "it's late September, so a fall
-income review to your prospects, or year-end cards to clients in early November"), then a
-three-touch sequence with dates in words, and ask which to start. Then call `complete_setup` and
-quote `walk.finish_message` exactly: "Setup is marked finished. Saved in your ClientGen account."
-
-## Design bar before any yes
-
-A postcard is shown as its proof (a real card, front and back), a note as its message-side
-proof, a page as its preview link. If a proof looks thin or generic, revise before asking
-for approval: `/page-design` for pages, a new draft (with `replaces_order_id`) for mail.
-
-## Never
-
-- Never mark or describe a brand kit as approved from here.
-- Do not volunteer vendor names. Say "ClientGen's print service" or "the note service" by
-  default, and answer truthfully if the advisor asks who fulfills a piece.
-- Never call `approve_order` or `approve_kit` for a test without the advisor's explicit words,
-  and never describe a staged order as approved: only the emailed click confirms it.
-- Never rely on chat memory for firm facts; read them again from the account.
-- Never turn an advisor's own tenure, credentials or history into the firm's, or the firm's
-  into one advisor's own.
-- Ask at most two questions in one turn, and only the real unresolved business or
-  compliance choices; group anything else for a later turn.
-- Never end a turn with only a promise to send something later: when the advisor asks for a
-  brief, a draft, or a list of questions, give it in full in this same reply.
-
-## If ClientGen is not connected
-
-Check before the first step. ClientGen Reach is connected only when its tools are available in
-this conversation (for example `get_setup_status` and `get_brand_profile`) and a call to one of
-them succeeds. Treat any of these as not connected: the tools are not listed; a call returns
-"tool not found", an authorization or sign-in error, or a 401; or the host says the connector
-needs to be connected.
-
-When it is not connected, stop and say exactly this, in plain words:
-
-"ClientGen Reach isn't connected in this conversation yet, so I can't see your account or
-draft anything in it. To connect it: open your assistant's settings, go to Connectors, add a
-custom connector with this address: https://mcp.clientgen.app/mcp, then choose Connect and sign
-in with your work email. If your firm manages connectors for you, your administrator may need
-to add it. Once it's connected, ask me again and I'll pick up from here."
-
-Then add this skill's one line (below). Never invent account state: no brand status, recipient
-counts, templates, prices, proof links, order numbers or approval status. Never draft, price or
-"approve" anything as if connected, and never simulate a proof. You may help the advisor think
-through the audience, the offer or the wording in plain text, labeled clearly as "not yet in
-ClientGen", if they ask.
-
-Once you're connected, I'll walk you through your firm, brand, compliance contacts and
-connections in about ten minutes.
+A real order requires the product's own firm review, explicit advisor approval, email confirmation, permitted recipients,
+archive and delivery checks. Availability comes from live connections, not a plugin description. A practice draft does not verify readiness for real delivery.
+A physical-mail hold does not imply every channel or hosted page is unavailable; explain only the relevant returned state.
+If tools are missing or authentication fails, stop and give the normal connection/sign-in handoff. Do not request passwords or codes in chat,
+create a replacement connection, fabricate account state or guess proof links. A Reach account is sufficient; never require a separate
+app.clientgen.ai subscription for this walkthrough.

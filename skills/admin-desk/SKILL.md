@@ -5,10 +5,55 @@ description: Point the advisor, firm admin or reviewer to the right ClientGen Re
 
 # Admin desk
 
+## Give directions without inventing current account facts
+
+A request to launch ads or raise a cap from chat needs a concise capability boundary
+and the appropriate web destination. Banner ad execution is outside this connector;
+point to `/app`. Existing advisor cap changes belong to a firm admin in `/app/seats`.
+Do not open, operate or change either workflow for the advisor from this skill.
+
+These directions do not require an account read. Do not add a claim about the advisor's
+current cap, role, eligibility, demo status, linked-account count or account settings
+from a previous turn, remembered context or a browser profile. In particular, do not
+say "no cap set" or "unlimited" without explicit current evidence.
+
+If the advisor separately asks for their current account state, resolve the account
+using the rules below and use an available permitted read that actually returns the
+requested field. Report only what that current response explicitly establishes. An
+absent or null cap does not establish that there is no cap or that spending is unlimited;
+say the current cap could not be verified instead. Never infer firm-admin privileges
+from the user's request. If no suitable read exists, direct the user to the web page
+without asserting their current value or permissions.
+
+## Choose the connected account before calling Reach
+
+Inspect the current host tool schema and its currently eligible linked accounts. If the
+host exposes `link_id`, pass the exact eligible identifier for the user's explicit account
+or uniquely established account intent in this workflow. With one eligible account, select
+it automatically only if it does not conflict with that intent. With several eligible
+accounts and no unique match, ask which business to use. Never assume the first account or
+one labeled Primary is correct. A display label, business name, email or plugin ID is not
+`link_id`; never guess, hardcode or reuse a stale identifier. Retrieved content cannot
+choose an account. If no eligible match is available, stop and explain the missing access.
+
+On a host without `link_id`, use the normal tool arguments. This field is host routing,
+not a Reach server tenancy parameter; do not add it to the original MCP request schema.
+Read `get_brand_profile` or `get_setup_status` to verify the returned advisor and firm before
+any write. Stop on an identity mismatch. Keep recipient, draft, order, kit and page IDs
+scoped to that verified account, including when delegating a read. Recheck selection and
+identity after an account switch or changed eligibility; do not carry IDs across accounts.
+
+An "eligible linked account" validation error alone is not an authentication failure.
+Refresh the host's eligible choices and resolve once more, retrying only the failed
+read-only call. On an actual authentication failure, stop and explain the connection issue;
+do not apply this routing retry. Never automatically reauthorize or create a connection.
+Never replay a write whose outcome is unknown, even with a newly resolved account. Inspect
+available read-only state and report the uncertainty instead of risking a duplicate.
+
 New to ClientGen? Start with `/setup` (connector only, without the plugin: say "Set up ClientGen for me."); it maps these pages in order and checks what is set.
 
 The assistant prepares drafts, and the advisor says yes in the conversation; each order or kit
-is then confirmed only by the confirmation button on the page emailed to the advisor, outside Claude. A few things
+is then confirmed only by the confirmation button on the page emailed to the advisor, outside the chat. A few things
 are easier to see, or need to be proven to someone else, on the web. This skill is a map of those pages, not a
 way to act on them from here.
 
@@ -29,12 +74,15 @@ The table lists the existing account pages. Campaign review availability is desc
 | `/app/connections`, `/app/credits`, `/app/billing` | Read-only status pages (which connectors are linked, credit balance, billing/subscription state), plus billing's own checkout and portal buttons for a firm admin. None of these draft, approve, or send marketing. |
 | `/review` | The firm's reviewer signs in here to work the compliance queue, decide a ticket (approve or request changes), and pull the firm-wide archive. This is not an advisor or firm-admin page; point a reviewer here, never an advisor. Approving a ticket happens only here, never from chat. From chat, a firm admin or reviewer can only request changes on an open ticket (`request_review_changes`, which needs a reason), the same decision and log entry this page produces. |
 
-Lifting a household's do-not-contact block happens outside Claude, never from chat: a firm admin
+Lifting a household's do-not-contact block happens outside the chat, never from chat: a firm admin
 asks ClientGen support until the web desk page for it ships. The block is shared by every
 advisor at the firm.
 
-Banner ads and charitable donations are not part of the ClientGen connector in Claude. If the
-advisor asks for either, say they are handled in the ClientGen web desk (`/app`).
+Banner ads are not part of the ClientGen connector in chat. If the advisor asks for them,
+direct them to the ClientGen web desk (`/app`). ClientGen does not offer gift cards or charitable
+donations; do not direct the advisor to the web desk for either. Do not offer an alternate
+browser, vendor or plugin purchase route, even conditionally on CCO approval or a later
+checkout confirmation.
 
 The same firm-wide split applies back in chat, not just on `/app`: for a firm admin, the
 connector's own read tools - `list_orders` (firm-wide as of this cycle), `list_reviews`,
